@@ -1,23 +1,31 @@
+import { useRxData } from 'rxdb-hooks';
 import logo from './logo.svg';
 import './App.css';
 
 function App() {
+  const { result: characters, isFetching } = useRxData(
+    // the collection to be queried
+    'characters',
+    // a function returning the query to be applied
+    collection =>
+      collection.find({
+        selector: {
+          affiliation: 'jedi',
+        },
+      })
+  );
+
+  if (isFetching) {
+    return 'loading characters...';
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <ul>
+        {characters.map((character, idx) => (
+          <li key={idx}>{character.name}</li>
+        ))}
+      </ul>
     </div>
   );
 }
